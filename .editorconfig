@@ -1,0 +1,21 @@
+root = true
+
+[*.{yml,yaml}]
+indent_size = 2
+indent_style = space
+tab_width = 2
+
+[*.json]
+indent_size = 2
+indent_style = space
+tab_width = 2
+
+[*.{csproj,props}]
+indent_size = 2
+indent_style = space
+tab_width = 2
+
+[*.cs]
+indent_size = 4
+indent_style = space
+tab_width = 4
