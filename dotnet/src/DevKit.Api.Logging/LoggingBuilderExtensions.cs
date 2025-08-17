@@ -42,7 +42,7 @@ public static class LoggingBuilderExtensions
                 {
                     ["service.name"] = otelOptions.ServiceName,
                     ["service.instance.id"] = otelOptions.InstanceId,
-                    ["service.version"] = otelOptions.ServiceVersion,
+                    ["service.version"] = DevKitOtelOptions.ServiceVersion,
                 };
             });
 

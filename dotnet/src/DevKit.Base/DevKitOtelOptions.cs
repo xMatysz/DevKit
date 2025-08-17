@@ -6,7 +6,7 @@ namespace DevKit.Base;
 public class DevKitOtelOptions
 {
     private static readonly string DefaultInstanceId = Guid.NewGuid().ToString();
-    public string ServiceVersion => Assembly.GetEntryAssembly()?.GetName().Version?.ToString()!;
+    public static string ServiceVersion => Assembly.GetEntryAssembly()?.GetName().Version?.ToString()!;
 
     [ConfigurationKeyName("ApplicationName")]
     public required string ApplicationName { get; init; }

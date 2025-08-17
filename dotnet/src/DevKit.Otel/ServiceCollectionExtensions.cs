@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
                     .AddService(otelOptions.ServiceName, serviceInstanceId: otelOptions.InstanceId)
                     .AddAttributes(
                     [
-                        new KeyValuePair<string, object>("service.version", otelOptions.ServiceVersion)
+                        new KeyValuePair<string, object>("service.version", DevKitOtelOptions.ServiceVersion)
                     ]);
             })
             .UseOtlpExporter(Enum.Parse<OtlpExportProtocol>(otelOptions.Protocol), new Uri(otelOptions.Endpoint))
