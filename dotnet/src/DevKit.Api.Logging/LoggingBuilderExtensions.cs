@@ -1,7 +1,9 @@
 using System.Globalization;
 using DevKit.Base;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
@@ -11,6 +13,14 @@ namespace DevKit.Api.Logging;
 
 public static class LoggingBuilderExtensions
 {
+    private const HttpLoggingFields DefaultHttpLogFields =
+        HttpLoggingFields.ResponseStatusCode |
+        HttpLoggingFields.Duration |
+        HttpLoggingFields.RequestBody |
+        HttpLoggingFields.RequestQuery |
+        HttpLoggingFields.RequestMethod |
+        HttpLoggingFields.RequestPath;
+
     private static readonly Action<LoggerConfiguration> ConsoleConfiguration =
         logConfig => logConfig
             .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
@@ -77,6 +87,8 @@ public static class LoggingBuilderExtensions
 
             loggerConfigurationAction(loggerConfiguration);
         });
+
+        builder.Services.AddHttpLogging(opt => { opt.LoggingFields = DefaultHttpLogFields; });
 
         return builder;
     }

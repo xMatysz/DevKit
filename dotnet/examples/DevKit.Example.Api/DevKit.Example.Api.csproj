@@ -5,9 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+<!--    <Version>1.2.3.4</Version>-->
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\DevKit.Api.Configuration\DevKit.Api.Configuration.csproj"/>
     <ProjectReference Include="..\..\src\DevKit.Api.Logging\DevKit.Api.Logging.csproj"/>
     <ProjectReference Include="..\..\src\DevKit.Otel\DevKit.Otel.csproj"/>
   </ItemGroup>
