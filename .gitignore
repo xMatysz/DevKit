@@ -1,4 +1,5 @@
 bin/
 obj/
 *.idea/
-*DotSettings.user*
+*DotSettings.user
+*launchSettings.json

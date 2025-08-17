@@ -1,0 +1,24 @@
+﻿services:
+  devkit.example.api:
+    image: devkit.example.api
+    build:
+      context: .
+      dockerfile: ../examples/DevKit.Example.Api/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DEVKIT_LOGGING_OTEL_ENDPOINT=http://aspire-dashboard:18889
+      - DEVKIT_LOGGING_OTEL_PROTOCOL=Grpc
+      - DEVKIT_LOGGING_USE_CONFIGURATION=True
+    depends_on:
+      - aspire-dashboard
+
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    container_name: aspire-dashboard
+    ports:
+      - "18888:18888"
+    environment:
+      - ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
+    restart: unless-stopped

@@ -3,13 +3,18 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
-    <GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
+    <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556"/>
+    <GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848"/>
   </ItemGroup>
   <!-- Tests -->
   <ItemGroup>
-    <PackageVersion Include="FluentAssertions" Version="8.6.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageVersion Include="xunit.v3" Version="3.0.1" />
+    <PackageVersion Include="xunit.v3" Version="3.0.1"/>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1"/>
+    <PackageVersion Include="FluentAssertions" Version="8.6.0"/>
+  </ItemGroup>
+  <!-- Loging -->
+  <ItemGroup>
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0"/>
+    <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.2.0"/>
   </ItemGroup>
 </Project>
