@@ -1,4 +1,5 @@
 using DevKit.Api.Logging;
+using DevKit.Otel;
 using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateEmptyBuilder(new WebApplicationOptions
@@ -23,11 +24,8 @@ builder.WebHost.UseKestrelCore();
 builder.WebHost.ConfigureKestrel(cfg => cfg.ListenAnyIP(3000));
 builder.Services.AddRoutingCore();
 
-builder.UseDevKitLogging(devKitLoggerOptionsAction: devKitOpt =>
-{
-    devKitOpt.ResourceAttributes
-        .Add("service.name", "DevKitApp");
-});
+builder.Services.AddDevKitOtel(builder.Configuration);
+builder.UseDevKitLogging();
 
 const HttpLoggingFields httpLoggingFields = HttpLoggingFields.ResponseStatusCode |
                                             HttpLoggingFields.Duration |

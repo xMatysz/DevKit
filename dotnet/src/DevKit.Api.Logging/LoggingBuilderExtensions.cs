@@ -1,9 +1,11 @@
 using System.Globalization;
+using DevKit.Base;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.OpenTelemetry;
 
 namespace DevKit.Api.Logging;
 
@@ -16,16 +18,22 @@ public static class LoggingBuilderExtensions
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.AspNetCore.HttpLogging", LogEventLevel.Information);
 
-    private static Action<LoggerConfiguration, DevKitLoggerOptions, IConfiguration> ConsoleAndOtelConfiguration =>
-        (logConfig, devKitOptions, configuration) =>
+    private static Action<LoggerConfiguration, DevKitLoggerOptions, DevKitOtelOptions, IConfiguration>
+        ConsoleAndOtelConfiguration =>
+        (logConfig, devKitOptions, otelOptions, configuration) =>
         {
             ConsoleConfiguration(logConfig);
 
             logConfig.WriteTo.OpenTelemetry(cfg =>
             {
-                cfg.Endpoint = devKitOptions.OtelEndpoint;
-                cfg.Protocol = devKitOptions.OtelProtocol;
-                cfg.ResourceAttributes = devKitOptions.ResourceAttributes;
+                cfg.Endpoint = otelOptions.Endpoint;
+                cfg.Protocol = Enum.Parse<OtlpProtocol>(otelOptions.Protocol);
+                cfg.ResourceAttributes = new Dictionary<string, object>
+                {
+                    ["service.name"] = otelOptions.ServiceName,
+                    ["service.instance.id"] = otelOptions.InstanceId,
+                    ["service.version"] = otelOptions.ServiceVersion,
+                };
             });
 
             if (devKitOptions.UseConfiguration)
@@ -42,10 +50,7 @@ public static class LoggingBuilderExtensions
 
         loggerConfigurationAction ??= ConsoleConfiguration;
 
-        builder.Host.UseSerilog((_, loggerConfiguration) =>
-        {
-            loggerConfigurationAction(loggerConfiguration);
-        });
+        builder.Host.UseSerilog((_, loggerConfiguration) => { loggerConfigurationAction(loggerConfiguration); });
 
         return builder;
     }
@@ -60,11 +65,14 @@ public static class LoggingBuilderExtensions
         var devKitLoggerOptions = builder.Configuration.Get<DevKitLoggerOptions>()!;
         devKitLoggerOptionsAction?.Invoke(devKitLoggerOptions);
 
+        var otelOptions = builder.Configuration.Get<DevKitOtelOptions>()!;
+
         builder.Host.UseSerilog((context, loggerConfiguration) =>
         {
             loggerConfigurationAction ??= logConfig => ConsoleAndOtelConfiguration(
                 logConfig,
                 devKitLoggerOptions,
+                otelOptions,
                 context.Configuration);
 
             loggerConfigurationAction(loggerConfiguration);

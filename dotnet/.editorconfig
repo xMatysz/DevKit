@@ -26,6 +26,9 @@ dotnet_diagnostic.SA1003.severity = error
 # SA1028: Code should not contain trailing whitespace
 dotnet_diagnostic.SA1028.severity = error
 
+# SA1101: Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none
+
 # SA1116: The parameters should begin on the line after the declaration, whenever the parameter span across multiple lines
 dotnet_diagnostic.SA1116.severity = error
 

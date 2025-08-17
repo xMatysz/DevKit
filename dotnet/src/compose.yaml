@@ -8,8 +8,8 @@
       - "3000:3000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DEVKIT_LOGGING_OTEL_ENDPOINT=http://aspire-dashboard:18889
-      - DEVKIT_LOGGING_OTEL_PROTOCOL=Grpc
+      - DEVKIT_OTEL_ENDPOINT=http://aspire-dashboard:18889
+      - DEVKIT_OTEL_PROTOCOL=Grpc
       - DEVKIT_LOGGING_USE_CONFIGURATION=True
     depends_on:
       - aspire-dashboard
