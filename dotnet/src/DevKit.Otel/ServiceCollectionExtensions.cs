@@ -1,9 +1,11 @@
+using System.Reflection;
 using DevKit.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using OpenTelemetry;
-using OpenTelemetry.Exporter;
+
+// using OpenTelemetry;
+// using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -14,19 +16,20 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDevKitOtel(this IServiceCollection services, IConfiguration configuration)
     {
+        ArgumentNullException.ThrowIfNull(configuration);
+
         var otelOptions = configuration.Get<DevKitOtelOptions>()!;
+        configuration["OTEL_SERVICE_NAME"] = otelOptions.ServiceName;
+        configuration["OTEL_SERVICE_VERSION"] = Assembly.GetEntryAssembly()?.GetName().Version?.ToString()!;
+        configuration["OTEL_RESOURCE_ATTRIBUTES"] = $"service.instance.id={otelOptions.InstanceId}";
 
         services.AddOpenTelemetry()
             .ConfigureResource(resourceBuilder =>
             {
                 resourceBuilder
-                    .AddService(otelOptions.ServiceName, serviceInstanceId: otelOptions.InstanceId)
-                    .AddAttributes(
-                    [
-                        new KeyValuePair<string, object>("service.version", DevKitOtelOptions.ServiceVersion)
-                    ]);
+                    .AddEnvironmentVariableDetector()
+                    .AddTelemetrySdk();
             })
-            .UseOtlpExporter(Enum.Parse<OtlpExportProtocol>(otelOptions.Protocol), new Uri(otelOptions.Endpoint))
             .WithTracing(traceConfig =>
             {
                 traceConfig
@@ -35,6 +38,8 @@ public static class ServiceCollectionExtensions
                     .AddAWSInstrumentation()
                     .AddEntityFrameworkCoreInstrumentation()
                     .AddNpgsql();
+
+                traceConfig.AddOtlpExporter();
             })
             .WithMetrics(metricConfig =>
             {
@@ -44,6 +49,8 @@ public static class ServiceCollectionExtensions
                     .AddRuntimeInstrumentation()
                     .AddAWSInstrumentation()
                     .AddNpgsqlInstrumentation();
+
+                metricConfig.AddOtlpExporter();
             });
 
         return services;

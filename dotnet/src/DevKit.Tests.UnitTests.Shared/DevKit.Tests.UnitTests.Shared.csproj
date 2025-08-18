@@ -11,4 +11,8 @@
     <ProjectReference Include="..\DevKit.Tests.Shared\DevKit.Tests.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NSubstitute" />
+  </ItemGroup>
+
 </Project>

@@ -1,12 +1,22 @@
 [*.cs]
+csharp_max_line_length = 200
 csharp_using_directive_placement = outside_namespace
 
 #IDE
 dotnet_diagnostic.IDE0005.severity = error
 
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = none
+
 # CA
+# CA1040: Avoid empty interfaces
+dotnet_diagnostic.CA1040.severity = none
+
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none
+
+# CA2016: Forward the 'cancellationToken' parameter to method or pass in 'CancellationToken.None' explicitly to indicate intentionally not propagating the token
+dotnet_diagnostic.CA2016.severity = error
 
 # CA2211: Non-constant fields should not be visible
 dotnet_diagnostic.CA2211.severity = error
@@ -16,6 +26,15 @@ dotnet_diagnostic.CA2211.severity = error
 dotnet_diagnostic.CS1591.severity = none
 
 #S
+# S2970: Complete the assertion
+dotnet_diagnostic.S2970.severity = error
+
+# S3246: Add the 'out' keyword to parameter to make it 'covariant'.
+dotnet_diagnostic.S3246.severity = error
+
+# S4144: Update this method so that its implementation is not identical.
+dotnet_diagnostic.S4144.severity = error
+
 # S6966: Await RunAsync instead.
 dotnet_diagnostic.S6966.severity = error
 
@@ -37,6 +56,15 @@ dotnet_diagnostic.SA1117.severity = error
 
 # SA1122: Use string.Empty for empty strings
 dotnet_diagnostic.SA1122.severity = error
+
+# SA1127: Generic type constraints should be on their own line
+dotnet_diagnostic.SA1127.severity = error
+
+# SA1309: Field should not begin with an underscore
+dotnet_diagnostic.SA1309.severity = none
+
+# SA1402: File may only contain a single type
+dotnet_diagnostic.SA1402.severity = error
 
 # SA1507 : Code should not contain multiple blank lines in a row
 dotnet_diagnostic.SA1507.severity = error
@@ -85,3 +113,6 @@ dotnet_diagnostic.SA1202.severity = none
 # xUnit1016: MemberData must reference a public member. Add or change the visibility of the data member to public.
 # SA1401: Field should be private
 dotnet_diagnostic.SA1401.severity = none
+
+# SA1402: File may only contain a single type
+dotnet_diagnostic.SA1402.severity = none

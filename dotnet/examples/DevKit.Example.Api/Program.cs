@@ -1,6 +1,10 @@
+using System.Diagnostics;
 using DevKit.Api.Configuration;
 using DevKit.Api.Logging;
 using DevKit.Otel;
+using Serilog;
+using Serilog.Context;
+using Serilog.Core.Enrichers;
 
 var builder = WebApplication.CreateEmptyBuilder(new WebApplicationOptions
 {
@@ -22,12 +26,26 @@ builder.Services.AddRoutingCore();
 builder.Configuration.AddDevKitConfiguration(builder.Environment.EnvironmentName);
 builder.Services.AddDevKitOtel(builder.Configuration);
 builder.UseDevKitLogging();
-
 var app = builder.Build();
 
-app.UseHttpLogging();
+app.UseSerilogRequestLogging();
 
 app.MapGet("/test", () => "Hello World!");
-app.MapPost("/test", (object test) => "Hello World!");
+app.MapPost("/test", (ILogger<Program> logger, object test) =>
+{
+    using var scope = Activity.Current.Source.CreateActivity("test", ActivityKind.Server).Start();
+    var sc = LogContext.Push(
+        new PropertyEnricher("requestId", Guid.NewGuid().ToString()),
+        new PropertyEnricher("correlationId", Guid.NewGuid().ToString()));
+    logger.LogTrace("Important note-0");
+    logger.LogDebug("Important note0");
+    logger.LogInformation("Important note");
+    logger.LogWarning("Important note2");
+    logger.LogError("Important note3");
+    logger.LogCritical("Important note4");
+    scope.Dispose();
+    sc.Dispose();
+    return "Hello World!";
+});
 
 await app.RunAsync();

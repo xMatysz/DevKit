@@ -1,9 +1,7 @@
 using System.Globalization;
 using DevKit.Base;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
@@ -13,20 +11,12 @@ namespace DevKit.Api.Logging;
 
 public static class LoggingBuilderExtensions
 {
-    private const HttpLoggingFields DefaultHttpLogFields =
-        HttpLoggingFields.ResponseStatusCode |
-        HttpLoggingFields.Duration |
-        HttpLoggingFields.RequestBody |
-        HttpLoggingFields.RequestQuery |
-        HttpLoggingFields.RequestMethod |
-        HttpLoggingFields.RequestPath;
-
     private static readonly Action<LoggerConfiguration> ConsoleConfiguration =
         logConfig => logConfig
             .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
+            .Enrich.FromLogContext()
             .MinimumLevel.Information()
-            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.AspNetCore.HttpLogging", LogEventLevel.Information);
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning);
 
     private static Action<LoggerConfiguration, DevKitLoggerOptions, DevKitOtelOptions, IConfiguration>
         ConsoleAndOtelConfiguration =>
@@ -34,17 +24,8 @@ public static class LoggingBuilderExtensions
         {
             ConsoleConfiguration(logConfig);
 
-            logConfig.WriteTo.OpenTelemetry(cfg =>
-            {
-                cfg.Endpoint = otelOptions.Endpoint;
-                cfg.Protocol = Enum.Parse<OtlpProtocol>(otelOptions.Protocol);
-                cfg.ResourceAttributes = new Dictionary<string, object>
-                {
-                    ["service.name"] = otelOptions.ServiceName,
-                    ["service.instance.id"] = otelOptions.InstanceId,
-                    ["service.version"] = DevKitOtelOptions.ServiceVersion,
-                };
-            });
+            logConfig.WriteTo.OpenTelemetry(_ => new BatchedOpenTelemetrySinkOptions(), configuration.GetValue<string>);
+            logConfig.Enrich.With(new NewRelicLevelEnricher());
 
             if (devKitOptions.UseConfiguration)
             {
@@ -72,6 +53,8 @@ public static class LoggingBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        builder.Logging.ClearProviders();
+
         var devKitLoggerOptions = builder.Configuration.Get<DevKitLoggerOptions>()!;
         devKitLoggerOptionsAction?.Invoke(devKitLoggerOptions);
 
@@ -87,8 +70,6 @@ public static class LoggingBuilderExtensions
 
             loggerConfigurationAction(loggerConfiguration);
         });
-
-        builder.Services.AddHttpLogging(opt => { opt.LoggingFields = DefaultHttpLogFields; });
 
         return builder;
     }

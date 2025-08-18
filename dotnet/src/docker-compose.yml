@@ -8,9 +8,11 @@
       - "3000:3000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DEVKIT_OTEL_ENDPOINT=http://aspire-dashboard:18889
-      - DEVKIT_OTEL_PROTOCOL=Grpc
       - DEVKIT_LOGGING_USE_CONFIGURATION=True
+      - OTEL_EXPORTER_OTLP_INSECURE=false
+      - OTEL_EXPORTER_OTLP_PROTOCOL=HttpProtobuf
+      - OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.eu01.nr-data.net:4318
+#      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
     depends_on:
       - aspire-dashboard
 
