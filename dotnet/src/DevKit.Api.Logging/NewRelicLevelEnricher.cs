@@ -3,7 +3,7 @@ using Serilog.Events;
 
 namespace DevKit.Api.Logging;
 
-public class NewRelicLevelEnricher : ILogEventEnricher
+public sealed class NewRelicLevelEnricher : ILogEventEnricher
 {
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {

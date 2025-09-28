@@ -8,9 +8,15 @@ dotnet_diagnostic.IDE0005.severity = error
 # IDE0290: Use primary constructor
 dotnet_diagnostic.IDE0290.severity = none
 
+# IDE0130: Namespace does not match folder structure
+dotnet_diagnostic.IDE0130.severity = error
+
 # CA
 # CA1040: Avoid empty interfaces
 dotnet_diagnostic.CA1040.severity = none
+
+# CA1852: Seal internal types
+dotnet_diagnostic.CA1852.severity = error
 
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none
@@ -22,8 +28,11 @@ dotnet_diagnostic.CA2016.severity = error
 dotnet_diagnostic.CA2211.severity = error
 
 # CS
-# CS1591 : Missing XML comment for publicly visible type or member
+# CS1591: Missing XML comment for publicly visible type or member
 dotnet_diagnostic.CS1591.severity = none
+
+# CS1591: Dereference of a possibly null reference
+dotnet_diagnostic.CS8602.severity = error
 
 #S
 # S2970: Complete the assertion

@@ -1,18 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <OutputType>exe</OutputType>
-  </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\DevKit.Tests.Shared\DevKit.Tests.Shared.csproj" />
+    <PackageReference Include="NSubstitute"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NSubstitute" />
+    <ProjectReference Include="..\DevKit.Tests.Shared\DevKit.Tests.Shared.csproj"/>
   </ItemGroup>
 
 </Project>

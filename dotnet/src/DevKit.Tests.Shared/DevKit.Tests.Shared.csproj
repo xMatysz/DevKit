@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <OutputType>exe</OutputType>
-  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions"/>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
+    <PackageReference Include="xunit.v3"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="FluentAssertions" />
-      <PackageReference Include="xunit.v3" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\examples\DevKit.Example.Api\DevKit.Example.Api.csproj"/>
+  </ItemGroup>
 
 </Project>

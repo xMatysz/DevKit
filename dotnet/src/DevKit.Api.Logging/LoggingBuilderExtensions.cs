@@ -11,8 +11,9 @@ namespace DevKit.Api.Logging;
 
 public static class LoggingBuilderExtensions
 {
-    private static readonly Action<LoggerConfiguration> ConsoleConfiguration =
-        logConfig => logConfig
+    private static readonly Action<LoggerConfiguration, IConfiguration> ConsoleConfiguration =
+        (logConfig, configuration) => logConfig
+            .ReadFrom.Configuration(configuration)
             .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
             .Enrich.FromLogContext()
             .MinimumLevel.Information()
@@ -22,15 +23,10 @@ public static class LoggingBuilderExtensions
         ConsoleAndOtelConfiguration =>
         (logConfig, devKitOptions, otelOptions, configuration) =>
         {
-            ConsoleConfiguration(logConfig);
+            ConsoleConfiguration(logConfig, configuration);
 
             logConfig.WriteTo.OpenTelemetry(_ => new BatchedOpenTelemetrySinkOptions(), configuration.GetValue<string>);
             logConfig.Enrich.With(new NewRelicLevelEnricher());
-
-            if (devKitOptions.UseConfiguration)
-            {
-                logConfig.ReadFrom.Configuration(configuration);
-            }
         };
 
     public static WebApplicationBuilder UseDevKitDefaultLogging(
@@ -39,7 +35,9 @@ public static class LoggingBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        loggerConfigurationAction ??= ConsoleConfiguration;
+        loggerConfigurationAction ??= logConfig => ConsoleConfiguration(
+            logConfig,
+            builder.Configuration);
 
         builder.Host.UseSerilog((_, loggerConfiguration) => { loggerConfigurationAction(loggerConfiguration); });
 
@@ -74,15 +72,15 @@ public static class LoggingBuilderExtensions
         return builder;
     }
 
-    // TODO: SGError -> use only one
+    // TODO: SGError -> use only one (HOST OR THIS)
     public static ILoggingBuilder AddDevKitLogger(
         this ILoggingBuilder builder,
-        Action<LoggerConfiguration>? globalLoggerConfiguration = null,
-        IConfiguration? configuration = null)
+        IConfiguration configuration,
+        Action<LoggerConfiguration>? globalLoggerConfiguration = null)
     {
         var loggerConfiguration = new LoggerConfiguration();
 
-        globalLoggerConfiguration ??= ConsoleConfiguration;
+        globalLoggerConfiguration ??= logConfig => ConsoleConfiguration(logConfig, configuration);
         globalLoggerConfiguration(loggerConfiguration);
 
         Log.Logger = loggerConfiguration.CreateLogger();

@@ -1,15 +1,19 @@
-using System.Diagnostics;
 using DevKit.Api.Configuration;
+using DevKit.Api.Exceptions;
 using DevKit.Api.Logging;
+using DevKit.Example.Application;
+using DevKit.MediatR;
+using DevKit.MediatR.Pipelines;
 using DevKit.Otel;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Serilog.Context;
-using Serilog.Core.Enrichers;
 
-var builder = WebApplication.CreateEmptyBuilder(new WebApplicationOptions
-{
-    Args = args,
-});
+var builder = WebApplication.CreateEmptyBuilder(
+    new WebApplicationOptions
+    {
+        Args = args,
+    });
 
 var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 if (!string.IsNullOrEmpty(envName))
@@ -23,29 +27,57 @@ builder.WebHost.UseKestrelCore();
 builder.WebHost.ConfigureKestrel(cfg => cfg.ListenAnyIP(3000));
 builder.Services.AddRoutingCore();
 
-builder.Configuration.AddDevKitConfiguration(builder.Environment.EnvironmentName);
+builder.Configuration.AddDevKitConfiguration("DevKit", builder.Environment.EnvironmentName);
 builder.Services.AddDevKitOtel(builder.Configuration);
 builder.UseDevKitLogging();
+builder.Services.AddOpenTelemetry().WithTracing(tr => tr.AddSource(ApplicationDiagnostics.ActivitySourceName));
+builder.Services.AddDevKitMediatR(typeof(ExampleQuery).Assembly);
+builder.Services.AddDbContextPool<IDevKitDbContext, TestDbContext>((sp, dbOptions) =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    dbOptions.UseNpgsql(connectionString);
+});
+
+builder.Services.AddDevKitExceptionHandlers();
+
 var app = builder.Build();
 
 app.UseSerilogRequestLogging();
+app.UseExceptionHandler();
 
-app.MapGet("/test", () => "Hello World!");
-app.MapPost("/test", (ILogger<Program> logger, object test) =>
-{
-    using var scope = Activity.Current.Source.CreateActivity("test", ActivityKind.Server).Start();
-    var sc = LogContext.Push(
-        new PropertyEnricher("requestId", Guid.NewGuid().ToString()),
-        new PropertyEnricher("correlationId", Guid.NewGuid().ToString()));
-    logger.LogTrace("Important note-0");
-    logger.LogDebug("Important note0");
-    logger.LogInformation("Important note");
-    logger.LogWarning("Important note2");
-    logger.LogError("Important note3");
-    logger.LogCritical("Important note4");
-    scope.Dispose();
-    sc.Dispose();
-    return "Hello World!";
-});
+app.MapGet(
+    "/query",
+    async (ISender sender) => await sender.Send(
+        new ExampleQuery
+        {
+            TodoId = "Query",
+        }));
+
+app.MapGet(
+    "/query-invalid",
+    async (ISender sender) =>
+    {
+        var random = Random.Shared.Next(1, 4);
+        var body = random switch
+        {
+            1 => string.Empty,
+            2 => null,
+            3 => " ",
+        };
+
+        return await sender.Send(
+            new ExampleQuery
+            {
+                TodoId = body,
+            });
+    });
+
+app.MapPost(
+    "/test",
+    async (ISender sender) => await sender.Send(
+        new ExampleCommand
+        {
+            Test = "Command",
+        }));
 
 await app.RunAsync();

@@ -1,5 +1,6 @@
 using DevKit.MediatR.Cqrs;
+using ErrorOr;
 
 namespace DevKit.MediatR.UnitTests.Doubles;
 
-public class TestCommand : ICommand<object>;
+public sealed class TestCommand : ICommand<ErrorOr<object>>;

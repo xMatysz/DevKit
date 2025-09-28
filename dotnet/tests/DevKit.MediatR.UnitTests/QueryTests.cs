@@ -4,7 +4,7 @@ using Xunit;
 
 namespace DevKit.MediatR.UnitTests;
 
-public class QueryTests : MediatRTestBase
+public sealed class QueryTests : MediatRTestBase
 {
     [Fact]
     public async Task SendQuery_Should_Handle_QueryHandler()

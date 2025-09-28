@@ -11,8 +11,9 @@
       - DEVKIT_LOGGING_USE_CONFIGURATION=True
       - OTEL_EXPORTER_OTLP_INSECURE=false
       - OTEL_EXPORTER_OTLP_PROTOCOL=HttpProtobuf
-      - OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.eu01.nr-data.net:4318
-#      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
+#      - OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.eu01.nr-data.net:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=devkitdb;Username=devkituser;Password=devkitpass
     depends_on:
       - aspire-dashboard
 
@@ -24,3 +25,19 @@
     environment:
       - ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
     restart: unless-stopped
+
+  postgres:
+    image: postgres:latest
+    container_name: devkit-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: devkitdb
+      POSTGRES_USER: devkituser
+      POSTGRES_PASSWORD: devkitpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

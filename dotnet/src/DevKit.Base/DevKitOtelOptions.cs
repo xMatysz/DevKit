@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace DevKit.Base;
 
-public class DevKitOtelOptions
+public sealed class DevKitOtelOptions
 {
     private static readonly string DefaultInstanceId = Guid.NewGuid().ToString();
     public static string ServiceVersion => Assembly.GetEntryAssembly()?.GetName().Version?.ToString()!;

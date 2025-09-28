@@ -1,7 +1,7 @@
-using MediatR;
+using ErrorOr;
 
 namespace DevKit.MediatR.Cqrs;
 
-public interface ICommandHandler<in TCommand, TResult> : IRequestHandler<TCommand, TResult>
+public interface ICommandHandler<in TCommand, TResult> : IHandlerBase<TCommand, TResult>
     where TCommand : ICommand<TResult>
-    where TResult : class;
+    where TResult : IErrorOr;

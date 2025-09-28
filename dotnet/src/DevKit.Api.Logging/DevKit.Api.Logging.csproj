@@ -1,18 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore"/>
+    <PackageReference Include="Serilog.Sinks.OpenTelemetry"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Serilog.AspNetCore" />
-      <PackageReference Include="Serilog.Sinks.OpenTelemetry" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\DevKit.Base\DevKit.Base.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DevKit.Base\DevKit.Base.csproj"/>
+  </ItemGroup>
 
 </Project>

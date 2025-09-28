@@ -4,7 +4,7 @@ using Xunit;
 
 namespace DevKit.Core.UnitTests.ExtensionsTests;
 
-public class StringExtensionsTests
+public sealed class StringExtensionsTests
 {
     private const string ValidString = "ValidString";
 

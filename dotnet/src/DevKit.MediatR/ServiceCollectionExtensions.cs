@@ -1,5 +1,4 @@
 using System.Reflection;
-using DevKit.MediatR.Pipelines;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,14 +8,25 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDevKitMediatR(this IServiceCollection services, params Assembly[] assemblies)
     {
-        services.AddValidatorsFromAssemblies(assemblies);
+        services.AddDevKitFluentValidation(assemblies);
+
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblies(assemblies);
 
-            cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+            cfg.AddValidationBehaviour();
+            cfg.AddUnitOfWork();
         });
 
         return services;
+    }
+
+    private static void AddDevKitFluentValidation(this IServiceCollection services, Assembly[] assemblies)
+    {
+        ValidatorOptions.Global.LanguageManager = new NameAndValueLanguageManager();
+        ValidatorOptions.Global.MessageFormatterFactory = () => new NullMessageFormatter();
+        ValidatorOptions.Global.DisplayNameResolver = (_, member, _) => member?.Name;
+
+        services.AddValidatorsFromAssemblies(assemblies);
     }
 }
