@@ -1,31 +1,28 @@
 using System.Globalization;
-using DevKit.Base;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.OpenTelemetry;
 
 namespace DevKit.Api.Logging;
 
 public static class LoggingBuilderExtensions
 {
-    private static readonly Action<LoggerConfiguration, IConfiguration> ConsoleConfiguration =
-        (logConfig, configuration) => logConfig
-            .ReadFrom.Configuration(configuration)
+    private static readonly Action<LoggerConfiguration> ConsoleConfiguration =
+        logConfig => logConfig
             .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
             .Enrich.FromLogContext()
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning);
 
-    private static Action<LoggerConfiguration, DevKitLoggerOptions, DevKitOtelOptions, IConfiguration>
+    private static Action<LoggerConfiguration, IConfiguration>
         ConsoleAndOtelConfiguration =>
-        (logConfig, devKitOptions, otelOptions, configuration) =>
+        (logConfig, configuration) =>
         {
-            ConsoleConfiguration(logConfig, configuration);
+            ConsoleConfiguration(logConfig);
 
-            logConfig.WriteTo.OpenTelemetry(_ => new BatchedOpenTelemetrySinkOptions(), configuration.GetValue<string>);
+            logConfig.WriteTo.OpenTelemetry(_ => { }, configuration.GetValue<string>);
             logConfig.Enrich.With(new NewRelicLevelEnricher());
         };
 
@@ -35,9 +32,7 @@ public static class LoggingBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        loggerConfigurationAction ??= logConfig => ConsoleConfiguration(
-            logConfig,
-            builder.Configuration);
+        loggerConfigurationAction ??= logConfig => ConsoleConfiguration(logConfig);
 
         builder.Host.UseSerilog((_, loggerConfiguration) => { loggerConfigurationAction(loggerConfiguration); });
 
@@ -46,27 +41,20 @@ public static class LoggingBuilderExtensions
 
     public static WebApplicationBuilder UseDevKitLogging(
         this WebApplicationBuilder builder,
-        Action<DevKitLoggerOptions>? devKitLoggerOptionsAction = null,
         Action<LoggerConfiguration>? loggerConfigurationAction = null)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
         builder.Logging.ClearProviders();
 
-        var devKitLoggerOptions = builder.Configuration.Get<DevKitLoggerOptions>()!;
-        devKitLoggerOptionsAction?.Invoke(devKitLoggerOptions);
-
-        var otelOptions = builder.Configuration.Get<DevKitOtelOptions>()!;
-
         builder.Host.UseSerilog((context, loggerConfiguration) =>
         {
             loggerConfigurationAction ??= logConfig => ConsoleAndOtelConfiguration(
                 logConfig,
-                devKitLoggerOptions,
-                otelOptions,
                 context.Configuration);
 
             loggerConfigurationAction(loggerConfiguration);
+            loggerConfiguration.ReadFrom.Configuration(builder.Configuration);
         });
 
         return builder;
@@ -75,12 +63,11 @@ public static class LoggingBuilderExtensions
     // TODO: SGError -> use only one (HOST OR THIS)
     public static ILoggingBuilder AddDevKitLogger(
         this ILoggingBuilder builder,
-        IConfiguration configuration,
         Action<LoggerConfiguration>? globalLoggerConfiguration = null)
     {
         var loggerConfiguration = new LoggerConfiguration();
 
-        globalLoggerConfiguration ??= logConfig => ConsoleConfiguration(logConfig, configuration);
+        globalLoggerConfiguration ??= logConfig => ConsoleConfiguration(logConfig);
         globalLoggerConfiguration(loggerConfiguration);
 
         Log.Logger = loggerConfiguration.CreateLogger();

@@ -6,22 +6,17 @@ namespace DevKit.Base;
 public sealed class DevKitOtelOptions
 {
     private static readonly string DefaultInstanceId = Guid.NewGuid().ToString();
-    public static string ServiceVersion => Assembly.GetEntryAssembly()?.GetName().Version?.ToString()!;
+    private string? _serviceName;
+
+    public string ServiceVersion { get; } = Assembly.GetEntryAssembly()?.GetName().Version?.ToString()!;
 
     [ConfigurationKeyName("ApplicationName")]
     public required string ApplicationName { get; init; }
+    public string ServiceName
+    {
+        get => _serviceName ??= ApplicationName;
+        init => _serviceName = value;
+    }
 
-    [ConfigurationKeyName("DEVKIT_OTEL_SERVICE_NAME")]
-    public string? DevKitOtelName { get; init; }
-
-    public string ServiceName => DevKitOtelName ?? ApplicationName;
-
-    [ConfigurationKeyName("DEVKIT_OTEL_INSTANCEID")]
     public string InstanceId { get; init; } = DefaultInstanceId;
-
-    [ConfigurationKeyName("DEVKIT_OTEL_ENDPOINT")]
-    public required string Endpoint { get; init; }
-
-    [ConfigurationKeyName("DEVKIT_OTEL_PROTOCOL")]
-    public required string Protocol { get; init; }
 }

@@ -1,11 +1,7 @@
-using System.Reflection;
 using DevKit.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-
-// using OpenTelemetry;
-// using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -20,7 +16,7 @@ public static class ServiceCollectionExtensions
 
         var otelOptions = configuration.Get<DevKitOtelOptions>()!;
         configuration["OTEL_SERVICE_NAME"] = otelOptions.ServiceName;
-        configuration["OTEL_SERVICE_VERSION"] = Assembly.GetEntryAssembly()?.GetName().Version?.ToString()!;
+        configuration["OTEL_SERVICE_VERSION"] = otelOptions.ServiceVersion;
         configuration["OTEL_RESOURCE_ATTRIBUTES"] = $"service.instance.id={otelOptions.InstanceId}";
 
         services.AddOpenTelemetry()

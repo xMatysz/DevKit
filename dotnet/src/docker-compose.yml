@@ -8,23 +8,27 @@
       - "3000:3000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DEVKIT_LOGGING_USE_CONFIGURATION=True
       - OTEL_EXPORTER_OTLP_INSECURE=false
       - OTEL_EXPORTER_OTLP_PROTOCOL=HttpProtobuf
 #      - OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.eu01.nr-data.net:4318
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
+      - AWS:Region=eu-central-1
+      - AWS:AuthenticationRegion=eu-central-1
+      - AWS:ServiceURL=http://localstack:4566
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=devkitdb;Username=devkituser;Password=devkitpass
     depends_on:
       - aspire-dashboard
+      - localstack
+      - postgres
 
   aspire-dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
     container_name: aspire-dashboard
+    restart: unless-stopped
     ports:
       - "18888:18888"
     environment:
       - ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
-    restart: unless-stopped
 
   postgres:
     image: postgres:latest
@@ -37,7 +41,22 @@
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - devkit_pg:/var/lib/postgresql/data
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    restart: unless-stopped
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=ssm
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - "./localstack:/etc/localstack/init/ready.d"
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
 volumes:
-  pgdata:
+  devkit_pg:
