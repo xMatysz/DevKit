@@ -9,18 +9,18 @@ namespace DevKit.Api.Logging;
 
 public static class LoggingBuilderExtensions
 {
-    private static readonly Action<LoggerConfiguration> ConsoleConfiguration =
+    private static readonly Action<LoggerConfiguration> _consoleConfiguration =
         logConfig => logConfig
             .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
             .Enrich.FromLogContext()
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning);
 
-    private static Action<LoggerConfiguration, IConfiguration>
-        ConsoleAndOtelConfiguration =>
+    private static readonly Action<LoggerConfiguration, IConfiguration>
+        _consoleAndOtelConfiguration =
         (logConfig, configuration) =>
         {
-            ConsoleConfiguration(logConfig);
+            _consoleConfiguration(logConfig);
 
             logConfig.WriteTo.OpenTelemetry(_ => { }, configuration.GetValue<string>);
             logConfig.Enrich.With(new NewRelicLevelEnricher());
@@ -32,7 +32,7 @@ public static class LoggingBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        loggerConfigurationAction ??= logConfig => ConsoleConfiguration(logConfig);
+        loggerConfigurationAction ??= logConfig => _consoleConfiguration(logConfig);
 
         builder.Host.UseSerilog((_, loggerConfiguration) => { loggerConfigurationAction(loggerConfiguration); });
 
@@ -49,7 +49,7 @@ public static class LoggingBuilderExtensions
 
         builder.Host.UseSerilog((context, loggerConfiguration) =>
         {
-            loggerConfigurationAction ??= logConfig => ConsoleAndOtelConfiguration(
+            loggerConfigurationAction ??= logConfig => _consoleAndOtelConfiguration(
                 logConfig,
                 context.Configuration);
 
@@ -67,7 +67,7 @@ public static class LoggingBuilderExtensions
     {
         var loggerConfiguration = new LoggerConfiguration();
 
-        globalLoggerConfiguration ??= logConfig => ConsoleConfiguration(logConfig);
+        globalLoggerConfiguration ??= logConfig => _consoleConfiguration(logConfig);
         globalLoggerConfiguration(loggerConfiguration);
 
         Log.Logger = loggerConfiguration.CreateLogger();

@@ -5,7 +5,7 @@ namespace DevKit.Base;
 
 public sealed class DevKitOtelOptions
 {
-    private static readonly string DefaultInstanceId = Guid.NewGuid().ToString();
+    private static readonly string _defaultInstanceId = Guid.NewGuid().ToString();
     private string? _serviceName;
 
     public string ServiceVersion { get; } = Assembly.GetEntryAssembly()?.GetName().Version?.ToString()!;
@@ -18,5 +18,5 @@ public sealed class DevKitOtelOptions
         init => _serviceName = value;
     }
 
-    public string InstanceId { get; init; } = DefaultInstanceId;
+    public string InstanceId { get; init; } = _defaultInstanceId;
 }
