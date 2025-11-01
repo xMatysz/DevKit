@@ -87,6 +87,10 @@ dotnet_diagnostic.SA1122.severity = error
 # SA1127: Generic type constraints should be on their own line
 dotnet_diagnostic.SA1127.severity = error
 
+# SA1201: Elements Must Appear In The Correct Order
+# Reason: Don't agree that ctor before property
+dotnet_diagnostic.SA1201.severity = none
+
 # SA1309: Field should not begin with an underscore
 dotnet_diagnostic.SA1309.severity = none
 

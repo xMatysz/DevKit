@@ -2,7 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 
-namespace DevKit.Api.Exceptions;
+namespace DevKit.Api.Exceptions.Handlers;
 
 public class ValidationExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
 {

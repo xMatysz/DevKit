@@ -32,11 +32,7 @@ builder.Host.UseDefaultServiceProvider(sp =>
     sp.ValidateScopes = true;
 });
 
-builder.Configuration.AddDevKitConfiguration(
-    builder.Environment.ApplicationName,
-    builder.Environment.EnvironmentName);
-
-builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.UseDevKitConfiguration();
 
 builder.Services.AddDevKitOtel(
     builder.Configuration,
