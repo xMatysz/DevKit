@@ -53,8 +53,8 @@
   </ItemGroup>
   <!-- MassTransit -->
   <ItemGroup>
-    <PackageVersion Include="MassTransit" Version="[8.5.3, 8.0.0)" />
-    <PackageVersion Include="MassTransit.AmazonSQS" Version="[8.5.3, 8.0.0)" />
+    <PackageVersion Include="MassTransit" Version="[8.5.5]" />
+    <PackageVersion Include="MassTransit.AmazonSQS" Version="[8.5.5]" />
   </ItemGroup>
   <!-- Tests -->
   <ItemGroup>

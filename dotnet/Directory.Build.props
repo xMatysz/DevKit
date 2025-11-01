@@ -15,7 +15,7 @@
   <!-- xunit.v3 -->
   <PropertyGroup Condition="$(MSBuildProjectName.Contains('Tests'))">
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
-    <TestingPlatfromDotnetTestSupport>true</TestingPlatfromDotnetTestSupport>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 

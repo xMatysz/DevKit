@@ -11,7 +11,12 @@ namespace DevKit.Otel;
 
 public static class ServiceCollectionExtensions
 {
-    public static IOpenTelemetryBuilder AddDevKitOtel(this IServiceCollection services, IConfiguration configuration)
+    public static IOpenTelemetryBuilder AddDevKitOtel(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        Action<ResourceBuilder>? resourceBuilder = null,
+        Action<TracerProviderBuilder>? traceBuilder = null,
+        Action<MeterProviderBuilder>? metricBuilder = null)
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
@@ -21,11 +26,13 @@ public static class ServiceCollectionExtensions
         configuration["OTEL_RESOURCE_ATTRIBUTES"] = $"service.instance.id={otelOptions.InstanceId}";
 
         var otelBuilder = services.AddOpenTelemetry()
-            .ConfigureResource(resourceBuilder =>
+            .ConfigureResource(resourceConfig =>
             {
-                resourceBuilder
+                resourceConfig
                     .AddEnvironmentVariableDetector()
                     .AddTelemetrySdk();
+
+                resourceBuilder?.Invoke(resourceConfig);
             })
             .WithTracing(traceConfig =>
             {
@@ -37,6 +44,8 @@ public static class ServiceCollectionExtensions
                     .AddNpgsql();
 
                 traceConfig.AddOtlpExporter();
+
+                traceBuilder?.Invoke(traceConfig);
             })
             .WithMetrics(metricConfig =>
             {
@@ -48,6 +57,8 @@ public static class ServiceCollectionExtensions
                     .AddNpgsqlInstrumentation();
 
                 metricConfig.AddOtlpExporter();
+
+                metricBuilder?.Invoke(metricConfig);
             });
 
         return otelBuilder;

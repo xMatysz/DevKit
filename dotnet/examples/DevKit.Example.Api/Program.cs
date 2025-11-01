@@ -6,7 +6,6 @@ using DevKit.MediatR;
 using DevKit.MediatR.Pipelines;
 using DevKit.Otel;
 using Microsoft.EntityFrameworkCore;
-using OpenTelemetry;
 using Serilog;
 
 var builder = WebApplication.CreateEmptyBuilder(
@@ -33,18 +32,18 @@ builder.Host.UseDefaultServiceProvider(sp =>
     sp.ValidateScopes = true;
 });
 
-builder.WebHost.UseDefaultServiceProvider(sp =>
-{
-    sp.ValidateOnBuild = true;
-    sp.ValidateScopes = true;
-});
-
 builder.Configuration.AddDevKitConfiguration(
     builder.Environment.ApplicationName,
     builder.Environment.EnvironmentName);
 
-builder.Services.AddDevKitOtel(builder.Configuration)
-    .WithTracing(tr => tr.AddSource(ApplicationDiagnostics.ActivitySourceName));
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+
+builder.Services.AddDevKitOtel(
+    builder.Configuration,
+    traceBuilder: trace =>
+    {
+        trace.AddSource(ApplicationDiagnostics.ActivitySourceName);
+    });
 
 builder.UseDevKitLogging();
 

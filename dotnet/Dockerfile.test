@@ -1,0 +1,22 @@
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER $APP_UID
+WORKDIR /app
+EXPOSE 3000
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /dotnet
+COPY . .
+RUN dotnet build "./src/DevKit.sln" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR /dotnet/tests/DevKit.Core.UnitTests
+RUN dotnet run -- --report-xunit-html --results-directory /app/TestResults
+
+FROM build AS publish
+WORKDIR /dotnet/examples
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./DevKit.Example.Api/DevKit.Example.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "DevKit.Example.Api.dll"]
