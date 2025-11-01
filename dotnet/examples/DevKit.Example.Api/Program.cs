@@ -6,6 +6,7 @@ using DevKit.MediatR;
 using DevKit.MediatR.Pipelines;
 using DevKit.Otel;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry;
 using Serilog;
 
 var builder = WebApplication.CreateEmptyBuilder(
@@ -26,10 +27,27 @@ builder.WebHost.UseKestrelCore();
 builder.WebHost.ConfigureKestrel(cfg => cfg.ListenAnyIP(3000));
 builder.Services.AddRoutingCore();
 
-builder.Configuration.AddDevKitConfiguration("DevKit", builder.Environment.EnvironmentName);
-builder.Services.AddDevKitOtel(builder.Configuration);
+builder.Host.UseDefaultServiceProvider(sp =>
+{
+    sp.ValidateOnBuild = true;
+    sp.ValidateScopes = true;
+});
+
+builder.WebHost.UseDefaultServiceProvider(sp =>
+{
+    sp.ValidateOnBuild = true;
+    sp.ValidateScopes = true;
+});
+
+builder.Configuration.AddDevKitConfiguration(
+    builder.Environment.ApplicationName,
+    builder.Environment.EnvironmentName);
+
+builder.Services.AddDevKitOtel(builder.Configuration)
+    .WithTracing(tr => tr.AddSource(ApplicationDiagnostics.ActivitySourceName));
+
 builder.UseDevKitLogging();
-builder.Services.AddOpenTelemetry().WithTracing(tr => tr.AddSource(ApplicationDiagnostics.ActivitySourceName));
+
 builder.Services.AddDevKitMediatR(typeof(ExampleQuery).Assembly);
 builder.Services.AddDbContextPool<IDevKitDbContext, TestDbContext>((sp, dbOptions) =>
 {

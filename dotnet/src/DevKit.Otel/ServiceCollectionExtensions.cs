@@ -2,6 +2,7 @@ using DevKit.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -10,7 +11,7 @@ namespace DevKit.Otel;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDevKitOtel(this IServiceCollection services, IConfiguration configuration)
+    public static IOpenTelemetryBuilder AddDevKitOtel(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
@@ -19,7 +20,7 @@ public static class ServiceCollectionExtensions
         configuration["OTEL_SERVICE_VERSION"] = otelOptions.ServiceVersion;
         configuration["OTEL_RESOURCE_ATTRIBUTES"] = $"service.instance.id={otelOptions.InstanceId}";
 
-        services.AddOpenTelemetry()
+        var otelBuilder = services.AddOpenTelemetry()
             .ConfigureResource(resourceBuilder =>
             {
                 resourceBuilder
@@ -49,6 +50,6 @@ public static class ServiceCollectionExtensions
                 metricConfig.AddOtlpExporter();
             });
 
-        return services;
+        return otelBuilder;
     }
 }
