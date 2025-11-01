@@ -44,7 +44,6 @@ var app = builder.Build();
 
 app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
-
 app.MapGet(
     "/query",
     async (ISender sender) => await sender.Send(
@@ -52,6 +51,9 @@ app.MapGet(
         {
             TodoId = "Query",
         }));
+
+    app.MapHealthChecks("_health")
+        .ShortCircuit();
 
 app.MapGet(
     "/query-invalid",

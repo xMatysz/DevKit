@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
         {
             options.CustomizeProblemDetails = context =>
             {
-                context.ProblemDetails.Instance = context.HttpContext.Request.Path;
+                context.ProblemDetails.Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
             };
         });
 

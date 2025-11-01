@@ -5,8 +5,4 @@
     <ProjectReference Include="..\..\src\DevKit.Tests.UnitTests.Shared\DevKit.Tests.UnitTests.Shared.csproj"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-  </ItemGroup>
-
 </Project>
