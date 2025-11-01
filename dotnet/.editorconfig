@@ -2,6 +2,20 @@
 csharp_max_line_length = 200
 csharp_using_directive_placement = outside_namespace
 
+# Style
+
+# _field
+dotnet_naming_rule.private_fields_should_be_camel_with_underscore.severity = error
+dotnet_naming_rule.private_fields_should_be_camel_with_underscore.symbols  = private_fields
+dotnet_naming_rule.private_fields_should_be_camel_with_underscore.style    = camel_with_underscore_style
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.camel_with_underscore_style.required_prefix = _
+dotnet_naming_style.camel_with_underscore_style.capitalization = camel_case
+dotnet_naming_style.camel_with_underscore_style.word_separator =
+
 #IDE
 dotnet_diagnostic.IDE0005.severity = error
 
@@ -12,6 +26,9 @@ dotnet_diagnostic.IDE0290.severity = none
 dotnet_diagnostic.IDE0130.severity = error
 
 # CA
+# CA1062: Validate arguments of public methods
+dotnet_diagnostic.CA1062.severity = suggestion
+
 # CA1040: Avoid empty interfaces
 dotnet_diagnostic.CA1040.severity = none
 
@@ -79,7 +96,7 @@ dotnet_diagnostic.SA1402.severity = error
 dotnet_diagnostic.SA1507.severity = error
 
 # SA1515: Single-line comment should be preceded by blank line
-dotnet_diagnostic.SA1515.severity = error
+dotnet_diagnostic.SA1515.severity = none
 
 # SA1200: Using directive should appear within a namespace declaration
 dotnet_diagnostic.SA1200.severity = none

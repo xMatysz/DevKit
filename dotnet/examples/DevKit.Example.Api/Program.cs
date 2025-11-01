@@ -5,7 +5,6 @@ using DevKit.Example.Application;
 using DevKit.MediatR;
 using DevKit.MediatR.Pipelines;
 using DevKit.Otel;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -44,42 +43,5 @@ var app = builder.Build();
 
 app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
-app.MapGet(
-    "/query",
-    async (ISender sender) => await sender.Send(
-        new ExampleQuery
-        {
-            TodoId = "Query",
-        }));
-
-    app.MapHealthChecks("_health")
-        .ShortCircuit();
-
-app.MapGet(
-    "/query-invalid",
-    async (ISender sender) =>
-    {
-        var random = Random.Shared.Next(1, 4);
-        var body = random switch
-        {
-            1 => string.Empty,
-            2 => null,
-            3 => " ",
-        };
-
-        return await sender.Send(
-            new ExampleQuery
-            {
-                TodoId = body,
-            });
-    });
-
-app.MapPost(
-    "/test",
-    async (ISender sender) => await sender.Send(
-        new ExampleCommand
-        {
-            Test = "Command",
-        }));
 
 await app.RunAsync();

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DevKit.MediatR\DevKit.MediatR.csproj"/>
-    <ProjectReference Include="..\..\src\DevKit.Tests.UnitTests.Shared\DevKit.Tests.UnitTests.Shared.csproj"/>
+    <ProjectReference Include="..\..\src\DevKit.Tests.Unit.Shared\DevKit.Tests.Unit.Shared.csproj" />
   </ItemGroup>
 
 </Project>

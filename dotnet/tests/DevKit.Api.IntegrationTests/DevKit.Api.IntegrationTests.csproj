@@ -1,12 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions"/>
-    <PackageReference Include="xunit.v3"/>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\examples\DevKit.Example.Api\DevKit.Example.Api.csproj"/>
+    <ProjectReference Include="..\..\src\DevKit.Tests.Integration.Shared\DevKit.Tests.Integration.Shared.csproj"/>
   </ItemGroup>
 
 </Project>

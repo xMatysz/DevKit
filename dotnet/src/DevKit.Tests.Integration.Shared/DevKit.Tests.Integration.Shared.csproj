@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DevKit.Tests.Shared\DevKit.Tests.Shared.csproj"/>
+  </ItemGroup>
+  
+</Project>
