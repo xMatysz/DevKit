@@ -1,7 +1,7 @@
 using Serilog.Core;
 using Serilog.Events;
 
-namespace DevKit.Api.Logging;
+namespace DevKit.Api.Logging.Enrichers;
 
 public sealed class NewRelicLevelEnricher : ILogEventEnricher
 {

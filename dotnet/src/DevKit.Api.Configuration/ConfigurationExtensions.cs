@@ -1,4 +1,3 @@
-using Amazon.Extensions.Configuration.SystemsManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,18 +31,11 @@ public static class ConfigurationExtensions
             .AddSystemsManager(cfg =>
             {
                 cfg.Path = $"/{applicationName}/{environment}/";
-                cfg.OnLoadException = OnException;
             })
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
             .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: false)
             .AddEnvironmentVariables();
 
         return configuration;
-    }
-
-    private static void OnException(SystemsManagerExceptionContext obj)
-    {
-        // TODO FIX ME
-        obj.Ignore = true;
     }
 }

@@ -1,4 +1,5 @@
 using System.Globalization;
+using DevKit.Api.Logging.Enrichers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
