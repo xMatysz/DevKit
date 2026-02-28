@@ -11,8 +11,16 @@
   </ItemGroup>
   <!-- Loging -->
   <ItemGroup>
+    <PackageVersion Include="CommunityToolkit.Maui" Version="12.0.0" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.82" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.2.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.1.4" />
   </ItemGroup>
   <!-- OTEL -->
   <ItemGroup>

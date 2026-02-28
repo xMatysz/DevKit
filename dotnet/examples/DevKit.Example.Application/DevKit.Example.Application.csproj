@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DevKit.Core\DevKit.Core.csproj" />
+    <ProjectReference Include="..\..\src\DevKit.Example.Domain\DevKit.Example.Domain.csproj" />
     <ProjectReference Include="..\..\src\DevKit.MediatR\DevKit.MediatR.csproj"/>
   </ItemGroup>
 

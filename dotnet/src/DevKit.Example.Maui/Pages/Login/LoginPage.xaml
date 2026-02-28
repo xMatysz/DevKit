@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<maui:DevKitPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:local="clr-namespace:DevKit.Example.Maui.Pages"
+                 xmlns:maui="clr-namespace:DevKit.Maui;assembly=DevKit.Maui"
+                 xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                 x:Class="DevKit.Example.Maui.Pages.Login.LoginPage"
+                 x:TypeArguments="local:LoginViewModel"
+                 x:DataType="local:LoginViewModel"
+                 Title="{Binding Title}">
+    <ContentPage.Resources>
+        <Style x:Key="InvalidEntryStyle" TargetType="Entry">
+            <Setter Property="TextColor" Value="Red" />
+        </Style>
+        <Style x:Key="ValidEntryStyle" TargetType="Entry">
+            <Setter Property="TextColor" Value="Green" />
+        </Style>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <VerticalStackLayout
+            HorizontalOptions="Fill"
+            VerticalOptions="Center"
+            Margin="20,0">
+            <Entry
+                x:Name="LoginEntry"
+                Placeholder="Login"
+                Text="{Binding Login}">
+                <Entry.Behaviors>
+                    <toolkit:EmailValidationBehavior
+                        BindingContext="{Binding Path=BindingContext, Source={x:Reference LoginEntry}}"
+                        InvalidStyle="{StaticResource InvalidEntryStyle}"
+                        ValidStyle="{StaticResource ValidEntryStyle}"
+                        IsValid="{Binding IsLoginValid}"
+                        Flags="ValidateOnValueChanged" />
+                </Entry.Behaviors>
+            </Entry>
+            <Entry
+                Placeholder="Password"
+                Text="{Binding Password}"
+                IsPassword="True" />
+            <Button
+                Text="Login"
+                Command="{Binding LoginCommand}" />
+            <Button
+                Text="Check creds"
+                Command="{Binding GetCredsCommand}"/>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</maui:DevKitPage>

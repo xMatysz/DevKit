@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\src\DevKit.Api.Exceptions\DevKit.Api.Exceptions.csproj" />
     <ProjectReference Include="..\..\src\DevKit.Api.Logging\DevKit.Api.Logging.csproj"/>
     <ProjectReference Include="..\..\src\DevKit.Core\DevKit.Core.csproj" />
+    <ProjectReference Include="..\..\src\DevKit.Example.Infrastructure\DevKit.Example.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\DevKit.Otel\DevKit.Otel.csproj"/>
     <ProjectReference Include="..\DevKit.Example.Application\DevKit.Example.Application.csproj"/>
   </ItemGroup>
@@ -21,7 +22,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
+    <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
+    <OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
+    <OpenApiGenerateEnvironment>Development</OpenApiGenerateEnvironment>
+  </PropertyGroup>
+
 
 </Project>

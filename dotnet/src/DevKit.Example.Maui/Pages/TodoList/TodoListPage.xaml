@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<maui:DevKitPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:maui="clr-namespace:DevKit.Maui;assembly=DevKit.Maui"
+                 xmlns:todoList="clr-namespace:DevKit.Example.Maui.Pages.TodoList"
+                 x:TypeArguments="todoList:TodoListViewModel"
+                 x:DataType="todoList:TodoListViewModel"
+                 x:Class="DevKit.Example.Maui.Pages.TodoList.TodoListPage">
+    <ContentPage.Content>
+        <VerticalStackLayout>
+            <CollectionView
+                ItemsSource="{Binding  TodoModels}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate
+                        x:DataType="todoList:TodoModel">
+                        <HorizontalStackLayout
+                            Spacing="30"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Padding="30">
+                            <CheckBox
+                                IsChecked="{Binding IsDone}"/>
+                            <Label
+                                Text="{Binding Id}"/>
+                            <Label
+                                Text="{Binding Title}"/>
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button
+                Text="Back"
+                Command="{Binding LogoutCommand}"/>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</maui:DevKitPage>
